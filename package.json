@@ -1,0 +1,26 @@
+{
+  "name": "tiny-ipc",
+  "version": "0.1.0",
+  "description": "small and simple IPC for easy clustered Development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xunxky/node-Tiny-IPC.git"
+  },
+  "keywords": [
+    "ipc",
+    "cluster",
+    "socket",
+    "unix",
+    "message"
+  ],
+  "author": "xunxky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xunxky/node-Tiny-IPC/issues"
+  },
+  "homepage": "https://github.com/xunxky/node-Tiny-IPC#readme"
+}
