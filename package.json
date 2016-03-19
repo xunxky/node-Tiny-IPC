@@ -1,6 +1,6 @@
 {
   "name": "tiny-ipc",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "small and simple IPC for easy clustered Development",
   "main": "index.js",
   "scripts": {
