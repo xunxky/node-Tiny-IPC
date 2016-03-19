@@ -9,7 +9,8 @@
 			cluster.fork();
 		}   
 	} else {
-		c = IPC.getClient('/tmp/mysock1');
-		c.on('message',function(o){console.log(o);});
+		c = IPC.getClient('/tmp/mysock1',process.pid);
+		c.on('message',function(o,f){console.log(f);console.log(o);});
 		c.broadcastMessage (' test '+process.pid);		
+
 	}
