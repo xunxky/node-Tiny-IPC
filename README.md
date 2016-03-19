@@ -30,7 +30,17 @@ probably it wont be very resilient and shouldnt be used after all ;)
 	}
 ```
 
+## Versions
 
+* v0.1 
+* v0.2 caller id  & direct message
+
+### Roadmap
+*  web socket option
+*  transport filtering
+*  adding simple encryption filter
+*  providing better errorhandling
+*  finalizing release
 
 ## Licenses
 MIT or UNLICENSE as you desire
