@@ -11,6 +11,13 @@
 	} else {
 		c = IPC.getClient('/tmp/mysock1',process.pid);
 		c.on('message',function(o,f){console.log(f);console.log(o);});
-		c.broadcastMessage (' test '+process.pid);		
-
+        messagecount = 0;
+        doMesssage = function() {
+            messagecount ++;
+            c.broadcastMessage (' test ' + messagecount + ' ' +process.pid);		
+        }
+        timers = {
+            t1 : setInterval(doMesssage,1000),
+            t2 : setInterval(doMesssage,1000)
+        }        
 	}

@@ -12,12 +12,11 @@ const EventEmitter = require('events');
 
 // going to be extended and  cleaned up later 
 
-
 var client = function(c,id){
     EventEmitter.call(this);
     var self = this;         
     var data = '';   
-    self.id = id ;            
+    self.id = id ;
     c.on('data',function(d){
         data = data+d;
         var m = data.split("\n");
@@ -65,6 +64,7 @@ var IPC = {
             var self = this;
             var i = 0;
             var clients = [];
+            var dataQueues = {};
             try{
                 fs.unlinkSync(socketpath);
             } catch ( e ) {}
@@ -72,11 +72,18 @@ var IPC = {
                 i ++;
                 var x = i+'';
                 clients.push({c:c,x:x});
+                dataQueues[x] = '';
                 c.on('data',function(d){
-                    for(var j = 0 ; j < clients.length ; j ++){
-                        if(clients[j].x != x){
-                            clients[j].c.write(d);
-                        }
+                    dataQueues[x] += d;                            
+                    var m = dataQueues[x].split("\n");
+                    if(m.length>1){ 
+                        d = m.slice(0,-1).join("\n")+"\n";
+                        dataQueues[x] = m[m.length-1]+"\n";
+                        for(var j = 0 ; j < clients.length ; j ++){
+                            if(clients[j].x != x){
+                                clients[j].c.write(d);
+                            }
+                        }                                        
                     }
                 });
                 c.on('error',function(){
