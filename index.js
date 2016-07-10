@@ -58,51 +58,65 @@ var client = function(c,id){
 };
 util.inherits(client,EventEmitter);
 
-var IPC = {
-	makeHub: function(socketpath){
-        var master = function(){
-            var self = this;
-            var i = 0;
-            var clients = [];
-            var dataQueues = {};
-            try{
-                fs.unlinkSync(socketpath);
-            } catch ( e ) {}
-            var s = net.createServer(function(c){
-                i ++;
-                var x = i+'';
-                clients.push({c:c,x:x});
-                dataQueues[x] = '';
-                c.on('data',function(d){
-                    dataQueues[x] += d;                            
-                    var m = dataQueues[x].split("\n");
-                    if(m.length>1){ 
-                        d = m.slice(0,-1).join("\n")+"\n";
-                        dataQueues[x] = m[m.length-1]+"\n";
-                        for(var j = 0 ; j < clients.length ; j ++){
-                            if(clients[j].x != x){
-                                clients[j].c.write(d);
-                            }
-                        }                                        
+var makeServer = function(){
+    var i = 0;
+    var clients = [];
+    var dataQueues = {};
+    return function(c){
+        i ++;
+        var x = i+'';
+        clients.push({c:c,x:x});
+        dataQueues[x] = '';
+        c.on('data',function(d){
+            dataQueues[x] += d;                            
+            var m = dataQueues[x].split("\n");
+            if(m.length>1){ 
+                d = m.slice(0,-1).join("\n")+"\n";
+                dataQueues[x] = m[m.length-1]+"\n";
+                for(var j = 0 ; j < clients.length ; j ++){
+                    if(clients[j].x != x){
+                        clients[j].c.write(d);
                     }
-                });
-                c.on('error',function(){
-                    for(var j = 0 ; j < clients.length ; j ++){
-                        if(clients[j].x == x){
-                            var me = clients.splice(j,1);							
-                            break;
-                        }
-                    }
-                });
-                c.write(JSON.stringify({r:'init',m:x})+"\n");
-            });
-            s.listen(socketpath);
+                }                                        
+            }
+        });
+        c.on('error',function(){
+            for(var j = 0 ; j < clients.length ; j ++){
+                if(clients[j].x == x){
+                    var me = clients.splice(j,1);							
+                    break;
+                }
+            }
+        });
+        c.write(JSON.stringify({r:'init',m:x})+"\n");
+    }
+};        
 
+function decodeOptions(options){    
+    if(options !== null && typeof options === 'object'){
+        return options;
+    } else {
+        return {path:options}
+    }
+}
+
+var IPC = {
+	makeHub: function(options){
+        options = decodeOptions(options);        
+        var master = function(){
+            var s = net.createServer(makeServer());
+            if(options.path){
+                try{
+                    fs.unlinkSync(options.path);
+                } catch ( e ) {}        
+            } 
+            s.listen(options);            
         };        
 		return new master();		
 	},
-	getClient: function(socketpath,id){
-        var c = net.connect(socketpath);
+	getClient: function(options,id){
+        options = decodeOptions(options);        
+        var c = net.connect(options);
 		return new client(c,id);		
 	}	
 }

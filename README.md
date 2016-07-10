@@ -34,9 +34,9 @@ probably it wont be very resilient and shouldnt be used after all ;)
 
 * v0.1 
 * v0.2 caller id  & direct message
+* v0.3 web sockets possible also 
 
 ### Roadmap
-*  web socket option
 *  transport filtering
 *  adding simple encryption filter
 *  providing better errorhandling
